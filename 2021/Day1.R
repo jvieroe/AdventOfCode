@@ -1,4 +1,5 @@
 library(tidyverse)
+library(tidyselect)
 
 # -------------------- DAY 1 --------------------
 
@@ -24,3 +25,23 @@ df %>%
 
 
 # ---------- Part Two ----------
+df <- input %>% 
+  mutate(l1 = dplyr::lag(measurement, 1),
+         l2 = dplyr::lag(measurement, 2)) %>% 
+  rowwise() %>%
+  mutate(three_window = sum(measurement,
+                            l1,
+                            l2)) %>% 
+  ungroup()
+
+df <- df %>% 
+  mutate(lag_three_window = dplyr::lag(three_window, 1))
+
+df <- df %>% 
+  mutate(increase = ifelse(three_window > lag_three_window,
+                           1,
+                           0))
+
+df %>% 
+  filter(increase == 1) %>% 
+  tally()
