@@ -5,4 +5,4 @@
 
 XX
 
-![alt text](https://github.com/jvieroe/AdventOfCode/blob/main/2021/carbons/d1.png?raw=true)
+![alt text](https://github.com/jvieroe/AdventOfCode/blob/main/2021/carbons/d1.svg?raw=true)
