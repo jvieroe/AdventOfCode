@@ -7,6 +7,6 @@
 
 
 ## Day 2: Dive!
-<img src="https://github.com/jvieroe/AdventOfCode/blob/main/2021/carbons/d1.svg?raw=true" alt="" width="650">
+<img src="https://github.com/jvieroe/AdventOfCode/blob/main/2021/carbons/d2.svg?raw=true" alt="" width="650">
 
 <b> Code </b>: <a href="https://github.com/jvieroe/AdventOfCode/blob/main/2021/Day2.R"> see here </a>
