@@ -5,7 +5,6 @@ input <- read_lines("2021/input_data/d2_input_text.txt") %>%
   tibble() %>% 
   rename(command = '.')
 
-# ---------- Part One ----------
 input <- input %>% 
   mutate(forward = grepl("forward", command),
          down = grepl("down", command),
@@ -15,6 +14,7 @@ input <- input %>%
                          parse_number(command),
                          NA)))
 
+# ---------- Part One ----------
 input %>% 
   summarize(horizontal = sum(forward, na.rm = T),
             vertical = sum(down, na.rm = T) - sum(up, na.rm = T)) %>% 
