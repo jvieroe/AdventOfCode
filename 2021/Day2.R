@@ -25,8 +25,11 @@ input %>%
 # 1459206
 
 # ---------- Part Two ----------
+input
+
 input <- input %>% 
-  mutate(aim = NA)
+  mutate(aim = NA) %>% 
+  mutate(aim = rollsum.default(up, k = 1))
 
 input
   
