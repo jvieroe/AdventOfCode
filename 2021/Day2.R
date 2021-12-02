@@ -1,6 +1,5 @@
 # -------------------- DAY 2 --------------------
 library(tidyverse)
-library(zoo)
 
 input <- read_lines("2021/input_data/d2_input_text.txt") %>% 
   tibble() %>% 
@@ -22,18 +21,15 @@ input %>%
   mutate(product = horizontal * vertical) %>% 
   pull(product)
 
-# 1459206
-
 # ---------- Part Two ----------
-input
-
-input <- input %>% 
-  mutate(aim = NA) %>% 
-  mutate(aim = rollsum.default(up, k = 1))
-
-input
-  
-
-# mutate(horizontal = sum(forward, na.rm = T),
-#          vertical = rollsum(up, 1, fill = NA))
-# input
+input %>% 
+  mutate(across(names(.),
+                ~ ifelse(is.na(.x),
+                         0,
+                         .x))) %>% 
+  mutate(horizontal = cumsum(forward),
+         aim = cumsum(down) - cumsum(up)) %>% 
+  mutate(vertical = cumsum((aim * forward))) %>% 
+  mutate(product = horizontal * vertical) %>% 
+  slice_tail() %>% 
+  pull(product)
