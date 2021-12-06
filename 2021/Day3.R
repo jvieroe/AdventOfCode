@@ -31,52 +31,148 @@ epsilon <- df %>%
 gamma*epsilon
 
 # ---------- Part Two ----------
-custom_round <- function(x, y) {
-  
-  if (x == 1/2) {
-    y <- ceiling(x)
-  } else if (x != 1/2) {
-    y <- round(x)
-  }
-  
-  return(y)
-  
-}
-
-df <- input %>%
+df <- input %>% 
   mutate(across(names(.),
                 ~ as.numeric(.x)))
+  # mutate(across(names(.),
+  #               ~ strtoi(.x)))
 
 nms <- names(df)
 
+oxygen <- df
+co2 <- df
+
+# for (i in seq_along(nms)) {
+#   
+#   co2 <- co2 %>%
+#     mutate(var := !!sym(nms[i]),
+#            var_mean = mean(!!sym(nms[i])))
+#   
+#   
+# }
+
+# custom_round <- function(x, y) {
+#   
+#   if (x == 1/2) {
+#     y <- ceiling(x)
+#   } else if (x != 1/2) {
+#     y <- round(x)
+#   }
+#   
+#   return(y)
+#   
+# }
+# 
+# custom_round <- function (x, digits = 0) {
+#   posneg <- sign(x)
+#   z <- trunc(abs(x) * 10 ^ (digits + 1)) / 10
+#   z <- floor(z * posneg + 0.5) / 10 ^ digits
+#   return(z)
+# }
+# 
+# 
+# 
+# 
+# for (i in seq_along(nms)) {
+#   
+#   if (nrow(oxygen) == 1) {
+#     
+#     oxygen <- oxygen
+#     
+#   } else if (nrow(oxygen) > 1) {
+#     
+#     oxygen <- oxygen %>%
+#       mutate(across(all_of(nms),
+#                     ~ mean(.x),
+#                     .names = "{.col}_mean")) %>% 
+#       mutate(across(ends_with("_mean"),
+#                     ~ round(.x))) %>% 
+#       filter(!!sym(nms[i]) == !!sym(paste0(nms[i], "_mean"))) %>% 
+#       select(-ends_with("_mean"))
+#     
+#   }
+#   
+# }
+# 
+
+
 for (i in seq_along(nms)) {
   
-  if (nrow(df) == 1) {
+  if (nrow(oxygen) == 1) {
     
-    df <- df
+    oxygen <- oxygen
     
-  } else if (nrow(df) > 1) {
+  } else if (nrow(oxygen) > 1) {
     
-    df <- df %>%
-      mutate(across(names(.),
-                    ~ mean(.x),
-                    .names = "{.col}_mean")) %>% 
-      mutate(across(ends_with("_mean"),
-                    ~ custom_round(.x))) %>% 
-      filter(!!sym(paste0("V", i)) == !!sym(paste0("V", i, "_mean")))
+    oxygen <- oxygen %>%
+      mutate(var := !!sym(nms[i]),
+             var_mean = round(mean(var) + 1e-6))
+    
+    if (oxygen$var_mean[1] == 0.5) {
+      
+      oxygen <- oxygen %>% 
+        filter(var == 1)
+      
+    } else if (oxygen$var_mean[1] != 0.5) {
+      
+      oxygen <- oxygen %>% 
+        filter(var == var_mean) %>% 
+        select(-c(var,
+                  var_mean))
+      
+    }
     
   }
   
 }
 
 
+for (i in seq_along(nms)) {
+  
+  if (nrow(co2) == 1) {
+    
+    co2 <- co2
+    
+  } else if (nrow(co2) > 1) {
+    
+    # co2 <- co2 %>%
+    #   mutate(across(all_of(nms),
+    #                 ~ mean(.x),
+    #                 .names = "{.col}_mean")) %>% 
+    #   mutate(across(ends_with("_mean"),
+    #                 ~ round(.x))) %>% 
+    #   filter(!!sym(nms[i]) != !!sym(paste0(nms[i], "_mean"))) %>% 
+    #   select(-ends_with("_mean"))
+    
+    co2 <- co2 %>%
+      mutate(var := !!sym(nms[i]),
+             var_mean = round(mean(var))) %>% 
+      filter(var != var_mean) %>% 
+      select(-c(var,
+                var_mean))
+    
+    
+  }
+  
+}
 
+oxygen
+co2
 
+oxygen %>% 
+  unite('.', 1:ncol(.), sep = "") %>% 
+  pull() %>% 
+  unbinary()
 
+co2 %>% 
+  unite('.', 1:ncol(.), sep = "") %>% 
+  pull() %>% 
+  unbinary()
 
+1465*3787
+oxygen * co2
 
-
-
+2981085/3787
 
 
 
