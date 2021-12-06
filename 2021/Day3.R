@@ -31,9 +31,57 @@ epsilon <- df %>%
 gamma*epsilon
 
 # ---------- Part Two ----------
-nms <- names(input)
+custom_round <- function(x, y) {
+  
+  if (x == 1/2) {
+    y <- ceiling(x)
+  } else if (x != 1/2) {
+    y <- round(x)
+  }
+  
+  return(y)
+  
+}
 
-df
+df <- input %>%
+  mutate(across(names(.),
+                ~ as.numeric(.x)))
+
+nms <- names(df)
+
+for (i in seq_along(nms)) {
+  
+  if (nrow(df) == 1) {
+    
+    df <- df
+    
+  } else if (nrow(df) > 1) {
+    
+    df <- df %>%
+      mutate(across(names(.),
+                    ~ mean(.x),
+                    .names = "{.col}_mean")) %>% 
+      mutate(across(ends_with("_mean"),
+                    ~ custom_round(.x))) %>% 
+      filter(!!sym(paste0("V", i)) == !!sym(paste0("V", i, "_mean")))
+    
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 df <- input %>%
   mutate(across(names(.),
