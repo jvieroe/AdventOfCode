@@ -31,8 +31,6 @@ epsilon <- df %>%
 
 gamma*epsilon
 
-3429254
-
 # ---------- Part Two ----------
 nms <- names(input)
 oxygen <- input
@@ -60,7 +58,6 @@ for (i in seq_along(nms)) {
     oxygen <- oxygen %>% 
       filter(var == tmp) %>% 
       select(-var)
-    
     
   }
   
@@ -90,7 +87,6 @@ for (i in seq_along(nms)) {
       filter(var != tmp) %>% 
       select(-var)
     
-    
   }
   
 }
@@ -105,4 +101,4 @@ co2 <- co2 %>%
   pull() %>% 
   unbinary()
 
-oxygen * co2
+oxygen*co2
