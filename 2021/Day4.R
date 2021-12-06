@@ -27,32 +27,44 @@ boards <- boards %>%
   group_by(board) %>% 
   mutate(row = row_number())
 
-df <- boards
 
-numbers <- numbers[1:10]
+
+numbers <- numbers[1:100]
 
 # ---------- Part One ----------
+df <- boards %>% 
+  as.data.frame() %>% 
+  mutate(rs = NA)
+
 for (i in seq_along(numbers)) {
   
   print(i)
   
-  #print(numbers[i])
+  if (!0 %in% df$rs) {
+    
+    df <- df %>% 
+      mutate(across(all_of(nms),
+                    ~ ifelse(.x == numbers[i],
+                             0,
+                             .x))) %>% 
+      mutate(rs = rowSums(.[1:5])) %>% 
+      group_by(board) %>% 
+      mutate(across(all_of(nms),
+                    ~ sum(.x),
+                    .names = "{.col}_cs")) %>% 
+      as.data.frame()
+    
+  } else if (0 %in% df$rs) {
+    
+    df <- df %>% 
+      mutate(turn = i)
+    
+  }
   
-  df <- df %>% 
-    mutate(across(all_of(nms),
-                  ~ ifelse(.x == numbers[i],
-                           0,
-                           .x))) %>% 
-    # mutate(rs = pmap_dbl(select(., nms),
-    #                      function(...) mean(c(...))))
-    # mutate(rs = rowMeans(subset(., select = c(v1, v2, v3, v4, v5)),
-    #                      na.rm = TRUE))
-    # mutate(rs = rowMeans(select(., nms)))
-    rowwise() %>%
-    mutate(is_na = sum(c(nms),
-                       na.rm = F)) %>%
-    ungroup()
   
 }
 
+temp <- df %>% 
+  select(ends_with("_cs")) 
+  summarise(min(.))
 
