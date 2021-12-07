@@ -7,11 +7,9 @@ numbers <- read_lines("2021/input_data/d4_numbers.txt") %>%
   unlist() %>% 
   as.integer()
 
-input <- read_lines("2021/input_data/d4_boards.txt") %>% 
+boards <- read_lines("2021/input_data/d4_boards.txt") %>% 
   tibble() %>% 
-  set_names("nn")
-
-boards <- input %>% 
+  set_names("nn") %>% 
   mutate(nn = str_trim(nn)) %>% 
   separate(nn, into = paste0("v",
                              seq(1:5))) %>% 
@@ -25,7 +23,6 @@ boards <- boards %>%
   mutate(board = sort(rep(seq(1, 100), 5))) %>% 
   mutate(rs = NA) %>% 
   as.data.frame()
-
 
 # ---------- Part One ----------
 bingo_fun <- function(data) {
@@ -83,7 +80,7 @@ bingo <- map(.x = blist,
 bind_rows(bingo) %>% 
   slice(which.min(V1)) %>% 
   mutate(product = V2*V3) %>% 
-  pull(product) # 41668
+  pull(product)
 
 
 # ---------- Part Two ----------
