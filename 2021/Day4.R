@@ -7,7 +7,6 @@ numbers <- read_lines("2021/input_data/d4_numbers.txt") %>%
   unlist() %>% 
   as.integer()
 
-
 input <- read_lines("2021/input_data/d4_boards.txt") %>% 
   tibble() %>% 
   set_names("nn")
@@ -22,13 +21,8 @@ boards <- input %>%
 
 nms <- names(boards)
 
-boards <- boards %>% 
-  mutate(board = sort(rep(seq(1, 100), 5))) %>% 
-  group_by(board) %>% 
-  mutate(row = row_number())
-
-
-
+boards <- boards %>%  
+  mutate(board = sort(rep(seq(1, 100), 5)))
 
 
 # ---------- Part One ----------
@@ -36,88 +30,15 @@ boards <- boards %>%
   as.data.frame() %>% 
   mutate(rs = NA)
 
-# bingo_fun <- function(data, y) {
-#   
-#   for (i in seq_along(numbers)) {
-#     
-#     data <- data %>% 
-#       mutate(across(all_of(nms),
-#                     ~ ifelse(.x == numbers[i],
-#                              0,
-#                              .x))) %>% 
-#       mutate(rs = rowSums(.[1:5])) %>% 
-#       group_by(board) %>% 
-#       mutate(across(all_of(nms),
-#                     ~ sum(.x),
-#                     .names = "{.col}_cs")) %>% 
-#       as.data.frame()
-#     
-#   }
-#   
-# }
-# 
-# blist <- split(boards,
-#                f = boards$board)
-# 
-# bingo <- map(blist,
-#              bingo_fun)
-
-
-nns <- numbers[1:20]
-
-df <- boards %>% 
-  filter(board %in% c(1))
-
-for (i in seq_along(nns)) {
+bingo_fun <- function(data) {
   
-  df <- df %>% 
-    mutate(across(all_of(nms),
-                  ~ ifelse(.x == numbers[i],
-                           0,
-                           .x))) %>% 
-    mutate(rs = rowSums(.[1:5])) %>% 
-    group_by(board) %>% 
-    mutate(across(all_of(nms),
-                  ~ sum(.x),
-                  .names = "{.col}_cs")) %>% 
-    as.data.frame()
+  turn <- c()
+  sum <- c()
+  call <- c()
   
-  temp_vec <- df %>% 
-    select(c(rs, ends_with("_cs"))) %>% 
-    as.matrix()
-  
-  if (min(temp_vec) == 0) {
-      
-      
-      
-    }
-  
-}
-
-
-
-
-
-mat <- matrix(nrow = 4,
-              ncol = 4)
-mat
-
-mat[,1] <- c(1,2,3,4)
-mat[,2] <- c(9,2,5,8)
-mat[,3] <- c(6,0,3,2)
-mat[,4] <- c(11,12,5,18)
-
-mat
-
-min(mat)
-
-for (i in seq_along(numbers)) {
-  
-  print(i)
-  
-  if (!0 %in% df$rs) {
+  for (i in seq_along(numbers)) {
     
-    df <- df %>% 
+    data <- data %>% 
       mutate(across(all_of(nms),
                     ~ ifelse(.x == numbers[i],
                              0,
@@ -129,20 +50,38 @@ for (i in seq_along(numbers)) {
                     .names = "{.col}_cs")) %>% 
       as.data.frame()
     
-  } else if (0 %in% df$rs) {
+    mat <- data %>% 
+      select(c(rs, ends_with("_cs"))) %>% 
+      as.matrix()
     
-    df <- df %>% 
-      mutate(turn = i)
+    if (min(mat) == 0) {
+      
+      turn[i] <- i
+      sum[i] <- sum(mat)
+      call[i] <- numbers[i]
+      
+    }
     
   }
   
+  y <- min(turn, na.rm = TRUE)
   
+  return(y)
+
+
 }
 
-temp <- df %>% 
-  select(ends_with("_cs")) %>% 
-  summarise(min(.))
+blist <- split(boards,
+               f = boards$board)
 
+bingo <- map(.x = blist,
+             .f = bingo_fun)
+
+
+bind_rows(bingo) %>% 
+  t() %>% 
+  tibble() %>% 
+  slice(which.min(.)) # 16
 
 
 
