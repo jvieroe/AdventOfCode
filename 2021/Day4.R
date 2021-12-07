@@ -36,6 +36,34 @@ df <- boards %>%
   as.data.frame() %>% 
   mutate(rs = NA)
 
+
+
+bingo_fun <- function(data, y) {
+  
+  for (i in seq_along(numbers)) {
+    
+    df <- df %>% 
+      mutate(across(all_of(nms),
+                    ~ ifelse(.x == numbers[i],
+                             0,
+                             .x))) %>% 
+      mutate(rs = rowSums(.[1:5])) %>% 
+      group_by(board) %>% 
+      mutate(across(all_of(nms),
+                    ~ sum(.x),
+                    .names = "{.col}_cs")) %>% 
+      as.data.frame()
+    
+  }
+  
+}
+
+
+
+
+
+
+
 for (i in seq_along(numbers)) {
   
   print(i)
@@ -65,6 +93,11 @@ for (i in seq_along(numbers)) {
 }
 
 temp <- df %>% 
-  select(ends_with("_cs")) 
+  select(ends_with("_cs")) %>% 
   summarise(min(.))
+
+
+
+
+
 
