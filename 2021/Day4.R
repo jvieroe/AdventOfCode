@@ -47,24 +47,24 @@ bingo_fun <- function(data) {
                     .names = "{.col}_cs")) %>% 
       as.data.frame()
     
-    # mat <- data %>% 
-    #   select(c(rs, ends_with("_cs"))) %>% 
-    #   as.matrix()
-    
-    cs <- data %>% 
-      select(ends_with("_cs")) %>% 
-      slice_head() %>% 
-      t()
-    
-    mat <- data %>% 
-      select(rs) %>% 
-      add_column(cs) %>% 
+    mat <- data %>%
+      select(c(rs, ends_with("_cs"))) %>%
       as.matrix()
+    
+    # cs <- data %>% 
+    #   select(ends_with("_cs")) %>% 
+    #   slice_head() %>% 
+    #   t()
+    # 
+    # mat <- data %>% 
+    #   select(rs) %>% 
+    #   add_column(cs) %>% 
+    #   as.matrix()
     
     if (min(mat) == 0) {
       
       exp[i, 1] <- i
-      exp[i, 2] <- sum(mat)
+      exp[i, 2] <- data %>% select(all_of(nms)) %>% as.matrix() %>% sum()
       exp[i, 3] <- numbers[i]
       
       # turn <- c()
@@ -96,12 +96,6 @@ bingo <- map(.x = blist,
 tt <- bind_rows(bingo,
                 .id = "number") %>% 
   slice(which.min(V1))
-
-
-test <- boards %>% filter(board == 69) %>% 
-  select(starts_with("v")) %>% 
-  as.matrix()
-sum(test)
 
 bind_rows(bingo) %>% 
   slice(which.min(V1)) %>% 
