@@ -47,19 +47,19 @@ bingo_fun <- function(data) {
                     .names = "{.col}_cs")) %>% 
       as.data.frame()
     
-    mat <- data %>%
-      select(c(rs, ends_with("_cs"))) %>%
-      as.matrix()
-    
-    # cs <- data %>% 
-    #   select(ends_with("_cs")) %>% 
-    #   slice_head() %>% 
-    #   t()
-    # 
-    # mat <- data %>% 
-    #   select(rs) %>% 
-    #   add_column(cs) %>% 
+    # mat <- data %>%
+    #   select(c(rs, ends_with("_cs"))) %>%
     #   as.matrix()
+    
+    cs <- data %>%
+      select(ends_with("_cs")) %>%
+      slice_head() %>%
+      t()
+
+    mat <- data %>%
+      select(rs) %>%
+      add_column(cs) %>%
+      as.matrix()
     
     if (min(mat) == 0) {
       
@@ -93,21 +93,15 @@ blist <- split(boards,
 bingo <- map(.x = blist,
              .f = bingo_fun)
 
-tt <- bind_rows(bingo,
-                .id = "number") %>% 
-  slice(which.min(V1))
+bind_rows(bingo) %>% 
+  slice(which.min(V1)) %>% 
+  mutate(product = V2*V3) %>% 
+  pull(product) # 41668
 
+
+# ---------- Part Two ----------
 bind_rows(bingo) %>% 
   slice(which.min(V1)) %>% 
   mutate(product = V2*V3) %>% 
   pull(product)
-
-
-
-# () %>% 
-#   tibble() %>% 
-#   slice(which.min(.)) # 16
-
-
-
 
