@@ -22,19 +22,16 @@ boards <- input %>%
 nms <- names(boards)
 
 boards <- boards %>%  
-  mutate(board = sort(rep(seq(1, 100), 5)))
+  mutate(board = sort(rep(seq(1, 100), 5))) %>% 
+  mutate(rs = NA) %>% 
+  as.data.frame()
 
 
 # ---------- Part One ----------
-boards <- boards %>% 
-  as.data.frame() %>% 
-  mutate(rs = NA)
-
 bingo_fun <- function(data) {
   
-  turn <- c()
-  sum <- c()
-  call <- c()
+  exp <- matrix(nrow = length(numbers),
+                ncol = 3)
   
   for (i in seq_along(numbers)) {
     
@@ -50,24 +47,43 @@ bingo_fun <- function(data) {
                     .names = "{.col}_cs")) %>% 
       as.data.frame()
     
+    # mat <- data %>% 
+    #   select(c(rs, ends_with("_cs"))) %>% 
+    #   as.matrix()
+    
+    cs <- data %>% 
+      select(ends_with("_cs")) %>% 
+      slice_head() %>% 
+      t()
+    
     mat <- data %>% 
-      select(c(rs, ends_with("_cs"))) %>% 
+      select(rs) %>% 
+      add_column(cs) %>% 
       as.matrix()
     
     if (min(mat) == 0) {
       
-      turn[i] <- i
-      sum[i] <- sum(mat)
-      call[i] <- numbers[i]
+      exp[i, 1] <- i
+      exp[i, 2] <- sum(mat)
+      exp[i, 3] <- numbers[i]
+      
+      # turn <- c()
+      # sum <- c()
+      # call <- c()
+      # turn[i] <- i
+      # sum[i] <- sum(mat)
+      # call[i] <- numbers[i]
       
     }
     
   }
   
-  y <- min(turn, na.rm = TRUE)
+  #y <- min(turn, na.rm = TRUE)
+  
+  y <- exp %>% 
+    as.data.frame()
   
   return(y)
-
 
 }
 
@@ -77,12 +93,26 @@ blist <- split(boards,
 bingo <- map(.x = blist,
              .f = bingo_fun)
 
+tt <- bind_rows(bingo,
+                .id = "number") %>% 
+  slice(which.min(V1))
+
+
+test <- boards %>% filter(board == 69) %>% 
+  select(starts_with("v")) %>% 
+  as.matrix()
+sum(test)
 
 bind_rows(bingo) %>% 
-  t() %>% 
-  tibble() %>% 
-  slice(which.min(.)) # 16
+  slice(which.min(V1)) %>% 
+  mutate(product = V2*V3) %>% 
+  pull(product)
 
+
+
+# () %>% 
+#   tibble() %>% 
+#   slice(which.min(.)) # 16
 
 
 
