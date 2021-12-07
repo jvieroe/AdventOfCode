@@ -47,10 +47,6 @@ bingo_fun <- function(data) {
                     .names = "{.col}_cs")) %>% 
       as.data.frame()
     
-    # mat <- data %>%
-    #   select(c(rs, ends_with("_cs"))) %>%
-    #   as.matrix()
-    
     cs <- data %>%
       select(ends_with("_cs")) %>%
       slice_head() %>%
@@ -67,18 +63,9 @@ bingo_fun <- function(data) {
       exp[i, 2] <- data %>% select(all_of(nms)) %>% as.matrix() %>% sum()
       exp[i, 3] <- numbers[i]
       
-      # turn <- c()
-      # sum <- c()
-      # call <- c()
-      # turn[i] <- i
-      # sum[i] <- sum(mat)
-      # call[i] <- numbers[i]
-      
     }
     
   }
-  
-  #y <- min(turn, na.rm = TRUE)
   
   y <- exp %>% 
     as.data.frame()
@@ -100,8 +87,10 @@ bind_rows(bingo) %>%
 
 
 # ---------- Part Two ----------
-bind_rows(bingo) %>% 
+bind_rows(bingo, .id = "board") %>%  
+  group_by(board) %>% 
   slice(which.min(V1)) %>% 
+  ungroup() %>% 
+  slice(which.max(V1)) %>% 
   mutate(product = V2*V3) %>% 
   pull(product)
-
